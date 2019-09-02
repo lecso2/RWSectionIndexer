@@ -1,4 +1,4 @@
-<img align="right" src="appGif.gif" height="400px"/>
+<img align="right" src="appGif.gif" height="300px"/>
 
 # RecyclerView Section Indexer Sample
 
