@@ -1,4 +1,4 @@
-![](appGif.gif)
+<img align="right" src="appGif.gif" height="500px"/>
 
 # RecyclerView Section Indexer Sample
 
