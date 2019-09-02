@@ -1,3 +1,5 @@
+![](appgif.gif)
+
 # RecyclerView Section Indexer Sample
 
 This is an example app for creating search-responsive indexer for Recyclerview.
