@@ -28,6 +28,101 @@ public class MyAdapter extends RecyclerView.Adapter implements SectionIndexer {
     //---needed for SectionIndexer IF--
     //this will help get the item position for the given index
     private final HashMap<Character, Integer> alphaIndexer = new HashMap<>();
+    //this will represent the indexes
+    private Character[] sections;
+
+    public MyAdapter(Context context, Comparator<Model> comparator) {
+        this.layoutInflater = LayoutInflater.from(context);
+        this.comparator = comparator;
+    }
+
+    @NonNull
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = layoutInflater.inflate(R.layout.rv_row_model, parent, false);
+        return new MyViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        MyViewHolder myViewHolder = (MyViewHolder) holder;
+        myViewHolder.textView.setText(mSortedList.get(position).getText());
+    }
+
+    @Override
+    public int getItemCount() {
+        return mSortedList.size();
+    }
+
+    //custom helper methods for adding items----------------
+
+    public void replaceAll(List<Model> models) {
+        mSortedList.clear();
+        add(models);
+    }
+
+    public void add(List<Model> models) {
+        mSortedList.addAll(models);
+        Collections.sort(mSortedList, comparator);
+        createNewIndexes();
+        notifyDataSetChanged();
+    }
+
+    private void createNewIndexes() {
+        alphaIndexer.clear();
+
+        //sectionList will be converted to sections
+        List<Character> sectionList = new ArrayList<>();
+
+        //iterate thorough the data we have and have the index
+        for (int index = 0; index < mSortedList.size(); index++) {
+            //get the first letter of the data
+            char c = mSortedList.get(index).getText().charAt(0);
+            //if we don't have this letter, put the index and letter to alphaIndexer
+            //since the list is sorted, the position will be valid
+            //also add to the sections the letter
+            if (!alphaIndexer.containsKey(c)) {
+                alphaIndexer.put(c, index);
+                sectionList.add(c);
+            }
+        }
+
+        //conversion from List to Array
+        sections = new Character[sectionList.size()];
+        sections = sectionList.toArray(sections);
+    }
+
+    //SectionIndexer IF------------------------
+
+    @Override
+    public Object[] getSections() {
+        return sections;
+    }
+
+    @Override
+    public int getPositionForSection(int sectionIndex) {
+        return alphaIndexer.get((sections[sectionIndex]));
+    }
+
+    @Override
+    public int getSectionForPosition(int position) {
+        return 0;
+    }
+
+
+    //ViewHolder--------------------------------------------------
+
+    private class MyViewHolder extends RecyclerView.ViewHolder {
+        TextView textView;
+
+        MyViewHolder(View view) {
+            super(view);
+            textView = view.findViewById(R.id.rw_row_model_text);
+        }
+    }
+
+    //SortedList creation------------------------------------------
+
     /*
     With this approach, notify methods are called automatically and the items are always sorted.
     Now I don't use this, because the onRemove() is called after every deletion in mSortedList.clear() and it is used
@@ -73,98 +168,4 @@ public class MyAdapter extends RecyclerView.Adapter implements SectionIndexer {
         }
 
     });
-    //this will represent the indexes
-    private Character[] sections;
-
-    public MyAdapter(Context context, Comparator<Model> comparator) {
-        this.layoutInflater = LayoutInflater.from(context);
-        this.comparator = comparator;
-    }
-
-    @NonNull
-    @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = layoutInflater.inflate(R.layout.rv_row_model, parent, false);
-        return new MyViewHolder(view);
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        MyViewHolder myViewHolder = (MyViewHolder) holder;
-        myViewHolder.textView.setText(mSortedList.get(position).getText());
-    }
-
-    //custom helper methods for adding items----------------
-
-    @Override
-    public int getItemCount() {
-        return mSortedList.size();
-    }
-
-    public void replaceAll(List<Model> models) {
-        mSortedList.clear();
-        add(models);
-    }
-
-    public void add(List<Model> models) {
-        mSortedList.addAll(models);
-        Collections.sort(mSortedList, comparator);
-        createNewIndexes();
-        notifyDataSetChanged();
-    }
-
-    //SectionIndexer IF------------------------
-
-    private void createNewIndexes() {
-        alphaIndexer.clear();
-
-        //sectionList will be converted to sections
-        List<Character> sectionList = new ArrayList<>();
-
-        //iterate thorough the data we have and have the index
-        for (int index = 0; index < mSortedList.size(); index++) {
-            //get the first letter of the data
-            char c = mSortedList.get(index).getText().charAt(0);
-            //if we don't have this letter, put the index and letter to alphaIndexer
-            //since the list is sorted, the position will be valid
-            //also add to the sections the letter
-            if (!alphaIndexer.containsKey(c)) {
-                alphaIndexer.put(c, index);
-                sectionList.add(c);
-            }
-        }
-
-        //conversion from List to Array
-        sections = new Character[sectionList.size()];
-        sections = sectionList.toArray(sections);
-    }
-
-    @Override
-    public Object[] getSections() {
-        return sections;
-    }
-
-    @Override
-    public int getPositionForSection(int sectionIndex) {
-        return alphaIndexer.get((sections[sectionIndex]));
-    }
-
-
-    //ViewHolder--------------------------------------------------
-
-    @Override
-    public int getSectionForPosition(int position) {
-        return 0;
-    }
-
-    //SortedList creation------------------------------------------
-
-    private class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView textView;
-
-        MyViewHolder(View view) {
-            super(view);
-            textView = view.findViewById(R.id.rw_row_model_text);
-        }
-    }
 }

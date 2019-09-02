@@ -13,29 +13,6 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    //Model can implement Comparable, or this way different comparators can be made
-    //the best way depends on your needs
-    private Comparator<Model> customModelComparator = new Comparator<Model>() {
-        @Override
-        public int compare(Model m1, Model m2) {
-            return m1.getText().compareTo(m2.getText());
-        }
-    };
-
-    //return the Models which's text contains the given lowercase query
-    private static List<Model> filter(List<Model> models, String query) {
-        final String lowerCaseQuery = query.toLowerCase();
-        final List<Model> filteredModelList = new ArrayList<>();
-
-        for (Model model : models) {
-            if (model.getText().toLowerCase().contains(lowerCaseQuery)) {
-                filteredModelList.add(model);
-            }
-        }
-
-        return filteredModelList;
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,6 +65,29 @@ public class MainActivity extends AppCompatActivity {
             data.add(new Model(i, text));
         }
         return data;
+    }
+
+    //Model can implement Comparable, or this way different comparators can be made
+    //the best way depends on your needs
+    private Comparator<Model> customModelComparator = new Comparator<Model>() {
+        @Override
+        public int compare(Model m1, Model m2) {
+            return m1.getText().compareTo(m2.getText());
+        }
+    };
+
+    //return the Models which's text contains the given lowercase query
+    private static List<Model> filter(List<Model> models, String query) {
+        final String lowerCaseQuery = query.toLowerCase();
+        final List<Model> filteredModelList = new ArrayList<>();
+
+        for (Model model : models) {
+            if (model.getText().toLowerCase().contains(lowerCaseQuery)) {
+                filteredModelList.add(model);
+            }
+        }
+
+        return filteredModelList;
     }
 
 }
